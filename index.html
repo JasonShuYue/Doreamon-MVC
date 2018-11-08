@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Doraemon-demo</title>
     <style id="styleTag"></style>
     <link rel="stylesheet" href="style.css">
@@ -13,6 +14,11 @@
 <body>
     <div id="code-part">
         <pre id="code-pre"></pre>
+        <div class="speed-control clearfix">
+            <button class="speed" data-speed="slow">低速</button>
+            <button class="speed active" data-speed="normal">中速</button>
+            <button class="speed" data-speed="high">高速</button>
+        </div>
     </div>
     <div id="pre-part">
         <div class="head">

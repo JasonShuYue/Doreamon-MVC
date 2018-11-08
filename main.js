@@ -1,8 +1,9 @@
-var styleTag = document.querySelector("#styleTag");
-var pre = document.querySelector("#code-pre");
-
-
-var cssCode = `/*
+!function() {
+    var styleTag = document.querySelector("#styleTag");
+    var pre = document.querySelector("#code-pre");
+    var duration = 100;
+    var $speedControl = $('.speed-control');
+    var cssCode = `/*
     首先准备上下布局，上面为代码区，下面为预览区
 */
 #code-part {
@@ -262,20 +263,40 @@ var cssCode = `/*
     top: 100%;
 }
 `;
+    $speedControl.on('click', 'button', function(e) {
+        let $button = $(e.currentTarget);
+        let speed = $button.attr('data-speed');
+        $button.addClass("active")
+            .siblings(".active").removeClass("active");
+        switch(speed) {
+            case 'slow':
+                duration = 100;
+                break;
+            case 'normal':
+                duration = 50;
+                break;
+            case 'high':
+                duration = 10;
+                break;
+        };
+    });
+    // 这里使用闭包， 通过duration来控制速度
+    function writeCode(code, callback) {
+        var n = 0;
+        var id = setTimeout(function fn() {
+            n = n + 1;
+            styleTag.innerHTML = code.substring(0, n);
+            pre.innerHTML = code.substring(0, n);
+            pre.scrollTop = pre.scrollHeight;
+            if(n >= cssCode.length) {
+                clearInterval(id);
+                callback && callback();
+            } else {
+                setTimeout(fn, duration)
+            }
+        }, duration);
+    }
+    writeCode(cssCode);
+}();
 
 
-function writeCode(code, callback) {
-    var n = 0;
-    var id = setInterval(function fn() {
-        n = n + 1;
-        styleTag.innerHTML = code.substring(0, n);
-        pre.innerHTML = code.substring(0, n);
-        pre.scrollTop = pre.scrollHeight;
-        if(n >= cssCode.length) {
-            clearInterval(id);
-            callback && callback();
-        }
-    }, 10);
-}
-
-writeCode(cssCode);

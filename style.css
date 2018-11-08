@@ -16,7 +16,42 @@ body {
     height: 100vh;
 }
 
+.clearfix::after {
+    content: '';
+    display: block;
+    clear: both;
+}
 
+.code-part {
+    position: relative;
+}
+
+
+.speed-control {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.speed-control .speed {
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.speed-control .speed:focus {
+   outline: none;
+}
+
+.speed-control .speed.active {
+    box-shadow: 1px 1px 5px black;
+}
+
+.speed-control .speed:hover {
+    cursor: pointer;
+}
 
 
 
