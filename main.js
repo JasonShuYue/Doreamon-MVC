@@ -1,9 +1,42 @@
-!function() {
-    var styleTag = document.querySelector("#styleTag");
-    var pre = document.querySelector("#code-pre");
-    var duration = 100;
-    var $speedControl = $('.speed-control');
-    var cssCode = `/*
+function Model(options) {
+    this.code = options.code;
+    this.duration = options.duration;
+}
+
+function View(options) {
+    this.element = options.element;
+}
+
+
+View.prototype.writeCode = function(dom, model, callback) {
+    dom = document.querySelector(dom);
+    var tagName = dom.tagName;
+    var n = 0;
+    setTimeout(function fn() {
+        n += 1;
+        if(n === model.code.length) {
+            callback && callback();
+        } else {
+            if(tagName === "STYLE") {
+                dom.innerHTML += model.code.substring(n - 1, n);
+            }
+            if(tagName === "PRE") {
+                dom.scrollTop = dom.scrollHeight;
+                dom.innerText += model.code.substring(n - 1, n);
+            }
+            setTimeout(fn, model.duration);
+        }
+    }, model.duration);
+}
+
+
+
+
+
+
+
+let model = new Model({
+    code: `/*
     首先准备上下布局，上面为代码区，下面为预览区
 */
 #code-part {
@@ -262,41 +295,68 @@
     transform: translateX(-50%);
     top: 100%;
 }
-`;
-    $speedControl.on('click', 'button', function(e) {
-        let $button = $(e.currentTarget);
-        let speed = $button.attr('data-speed');
-        $button.addClass("active")
+    
+    `,
+    duration: 100
+});
+
+let view1 = new View({
+    element: "#styleTag",
+});
+
+let view2 = new View({
+    element: "#code-pre",
+});
+
+
+
+
+let controller = {
+    init(options) {
+        this.view = options.view;
+        this.model = options.model;
+        this.bindEvents();
+        this.view.writeCode(this.view.element, this.model);
+    },
+    bindEvents() {
+        var $speedControl = $('.speed-control');
+        $speedControl.on("click", "[data-speed]", (e) => {
+        let current = e.currentTarget;
+        let speed = $(current).attr("data-speed");
+        // 清楚兄弟的active，然后在当前元素添加active
+        $(current).addClass("active")
             .siblings(".active").removeClass("active");
         switch(speed) {
-            case 'slow':
-                duration = 100;
+            case "slow":
+                this.model.duration = 100;
                 break;
-            case 'normal':
-                duration = 50;
+            case "normal":
+                this.model.duration = 50;
                 break;
-            case 'high':
-                duration = 10;
+            case "high":
+                this.model.duration = 10;
                 break;
-        };
+        }
     });
-    // 这里使用闭包， 通过duration来控制速度
-    function writeCode(code, callback) {
-        var n = 0;
-        var id = setTimeout(function fn() {
-            n = n + 1;
-            styleTag.innerHTML = code.substring(0, n);
-            pre.innerHTML = code.substring(0, n);
-            pre.scrollTop = pre.scrollHeight;
-            if(n >= cssCode.length) {
-                clearInterval(id);
-                callback && callback();
-            } else {
-                setTimeout(fn, duration)
-            }
-        }, duration);
     }
-    writeCode(cssCode);
-}();
+};
+
+controller.init({
+    view: view1,
+    model: model
+});
+
+controller.init({
+    view: view2,
+    model: model
+});
+
+
+
+
+
+
+
+
 
 
